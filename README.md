@@ -1,19 +1,16 @@
-[中文](https://github.com/siyuan-note/plugin-sample/blob/main/README_zh_CN.md)
+[English](https://github.com/siyuan-note/plugin-sample/blob/main/README.md)
 
-# SiYuan plugin sample
+# 思源笔记插件示例
 
-## Get started
+## 开始
 
-* Make a copy of this repo as a template with the <kbd>Use this template</kbd> button, please note that the repo name
-  must be the same as the plugin name, the default branch must be `main`
-* Clone your repo to a local development folder. For convenience, you can place this folder in
-  your `{workspace}/data/plugins/` folder
-* Install [NodeJS](https://nodejs.org/en/download) and [pnpm](https://pnpm.io/installation), then run `pnpm i` in the
-  command line under your repo folder
-* Execute `pnpm run dev` for real-time compilation
-* Open SiYuan marketplace and enable plugin in downloaded tab
+* 通过 <kbd>Use this template</kbd> 按钮将该库文件复制到你自己的库中，请注意库名必须和插件名称一致，默认分支必须为 `main`
+* 将你的库克隆到本地开发文件夹中，为了方便可以直接将开发文件夹放置在 `{工作空间}/data/plugins/` 下
+* 安装 [NodeJS](https://nodejs.org/en/download) 和 [pnpm](https://pnpm.io/installation)，然后在开发文件夹下执行 `pnpm i`
+* 执行 `pnpm run dev` 进行实时编译
+* 在思源中打开集市并在下载选项卡中启用插件
 
-## Development
+## 开发
 
 * i18n/*
 * icon.png (160*160)
@@ -22,23 +19,21 @@
 * plugin.json
 * preview.png (1024*768)
 * README*.md
-* [Fontend API](https://github.com/siyuan-note/petal)
-* [Backend API](https://github.com/siyuan-note/siyuan/blob/master/API.md)
+* [前端 API](https://github.com/siyuan-note/petal)
+* [后端 API](https://github.com/siyuan-note/siyuan/blob/master/API_zh_CN.md)
 
-## I18n
+## 国际化
 
-In terms of internationalization, our main consideration is to support multiple languages. Specifically, we need to
-complete the following tasks:
+国际化方面我们主要考虑的是支持多语言，具体需要完成以下工作：
 
-* Meta information about the plugin itself, such as plugin description and readme
-    * `description` and `readme` fields in plugin.json, and the corresponding README*.md file
-* Text used in the plugin, such as button text and tooltips
-    * src/i18n/*.json language configuration files
-    * Use `this.i18.key` to get the text in the code
-* Finally, declare the language supported by the plugin in the `i18n` field in plugin.json
+* 插件自身的元信息，比如插件描述和自述文件
+  * plugin.json 中的 `description` 和 `readme` 字段，以及对应的 README*.md 文件
+* 插件中使用的文本，比如按钮文字和提示信息
+  * src/i18n/*.json 语言配置文件
+  * 代码中使用 `this.i18.key` 获取文本
+* 最后在 plugin.json 中的 `i18n` 字段中声明该插件支持的语言
 
-It is recommended that the plugin supports at least English and Simplified Chinese, so that more people can use it more
-conveniently.
+建议插件至少支持英文和简体中文，这样可以方便更多人使用。
 
 ## plugin.json
 
@@ -74,46 +69,44 @@ conveniently.
 }
 ```
 
-* `name`: Plugin name, must be the same as the repo name, and must be unique globally (no duplicate plugin names in the
-  marketplace)
-* `author`: Plugin author name
-* `url`: Plugin repo URL
-* `version`: Plugin version number, it is recommended to follow the [semver](https://semver.org/) specification
-* `minAppVersion`: Minimum version number of SiYuan required to use this plugin
-* `backends`: Backend environment required by the plugin, optional values are `windows`, `linux`, `darwin`, `docker`, `android`, `ios` and `all`
-  * `windows`: Windows desktop
-  * `linux`: Linux desktop
-  * `darwin`: macOS desktop
-  * `docker`: Docker
-  * `android`: Android APP
-  * `ios`: iOS APP
-  * `all`: All environments
-* `frontends`: Frontend environment required by the plugin, optional values are `desktop`, `desktop-window`, `mobile`, `browser-desktop`, `browser-mobile` and `all`
-  * `desktop`: Desktop
-  * `desktop-window`: Desktop window converted from tab
-  * `mobile`: Mobile APP
-  * `browser-desktop`: Desktop browser
-  * `browser-mobile`: Mobile browser
-  * `all`: All environments
-* `displayName`: Template display name, mainly used for display in the marketplace list, supports multiple languages
-    * `default`: Default language, must exist
-    * `zh_CN`, `en_US` and other languages: optional, it is recommended to provide at least Chinese and English
-* `description`: Plugin description, mainly used for display in the marketplace list, supports multiple languages
-    * `default`: Default language, must exist
-    * `zh_CN`, `en_US` and other languages: optional, it is recommended to provide at least Chinese and English
-* `readme`: readme file name, mainly used to display in the marketplace details page, supports multiple languages
-    * `default`: Default language, must exist
-    * `zh_CN`, `en_US` and other languages: optional, it is recommended to provide at least Chinese and English
-* `funding`: Plugin sponsorship information
-    * `openCollective`: Open Collective name
-    * `patreon`: Patreon name
-    * `github`: GitHub login name
-    * `custom`: Custom sponsorship link list
+* `name`：插件名称，必须和库名一致，且全局唯一（集市中不能有重名插件）
+* `author`：插件作者名
+* `url`：插件仓库地址
+* `version`：插件版本号，建议遵循 [semver](https://semver.org/lang/zh-CN/) 规范
+* `minAppVersion`：插件支持的最低思源笔记版本号
+* `backends`：插件需要的后端环境，可选值为 `windows`, `linux`, `darwin`, `docker`, `android`, `ios` and `all`
+  * `windows`：Windows 桌面端
+  * `linux`：Linux 桌面端
+  * `darwin`：macOS 桌面端
+  * `docker`：Docker 端
+  * `android`：Android 端
+  * `ios`：iOS 端
+  * `all`：所有环境
+* `frontends`：插件需要的前端环境，可选值为 `desktop`, `desktop-window`, `mobile`, `browser-desktop`, `browser-mobile` and `all`
+  * `desktop`：桌面端
+  * `desktop-window`：桌面端页签转换的独立窗口
+  * `mobile`：移动端
+  * `browser-desktop`：桌面端浏览器
+  * `browser-mobile`：移动端浏览器
+  * `all`：所有环境
+* `displayName`：模板显示名称，主要用于模板集市列表中显示，支持多语言
+  * `default`：默认语言，必须存在
+  * `zh_CN`、`en_US` 等其他语言：可选，建议至少提供中文和英文
+* `description`：插件描述，主要用于插件集市列表中显示，支持多语言
+  * `default`：默认语言，必须存在
+  * `zh_CN`、`en_US` 等其他语言：可选，建议至少提供中文和英文
+* `readme`：自述文件名，主要用于插件集市详情页中显示，支持多语言
+  * `default`：默认语言，必须存在
+  * `zh_CN`、`en_US` 等其他语言：可选，建议至少提供中文和英文
+* `funding`：插件赞助信息
+  * `openCollective`：Open Collective 名称
+  * `patreon`：Patreon 名称
+  * `github`：GitHub 登录名
+  * `custom`：自定义赞助链接列表
 
-## Package
+## 打包
 
-No matter which method is used to compile and package, we finally need to generate a package.zip, which contains at
-least the following files:
+无论使用何种方式编译打包，我们最终需要生成一个 package.zip，它至少包含如下文件：
 
 * i18n/*
 * icon.png (160*160)
@@ -123,17 +116,15 @@ least the following files:
 * preview.png (1024*768)
 * README*.md
 
-## List on the marketplace
+## 上架集市
 
-* `pnpm run build` to generate package.zip
-* Create a new GitHub release using your new version number as the "Tag version". See here for an
-  example: https://github.com/siyuan-note/plugin-sample/releases
-* Upload the file package.zip as binary attachments
-* Publish the release
+* 执行 `pnpm run build` 生成 package.zip
+* 在 GitHub 上创建一个新的发布，使用插件版本号作为 “Tag version”，示例 https://github.com/siyuan-note/plugin-sample/releases
+* 上传 package.zip 作为二进制附件
+* 提交发布
 
-If it is the first release, please create a pull request to
-the [Community Bazaar](https://github.com/siyuan-note/bazaar) repository and modify the plugins.json file in it. This
-file is the index of all community plugin repositories, the format is:
+如果是第一次发布版本，还需要创建一个 PR 到 [Community Bazaar](https://github.com/siyuan-note/bazaar) 社区集市仓库，修改该库的
+plugins.json。该文件是所有社区插件库的索引，格式为：
 
 ```json
 {
@@ -143,9 +134,7 @@ file is the index of all community plugin repositories, the format is:
 }
 ```
 
-After the PR is merged, the bazaar will automatically update the index and deploy through GitHub Actions. When releasing
-a new version of the plugin in the future, you only need to follow the above steps to create a new release, and you
-don't need to PR the community bazaar repo.
+PR 被合并以后集市会通过 GitHub Actions 自动更新索引并部署。后续发布新版本插件时只需要按照上述步骤创建新的发布即可，不需要再
+PR 社区集市仓库。
 
-Under normal circumstances, the community bazaar repo will automatically update the index and deploy every hour,
-and you can check the deployment status at https://github.com/siyuan-note/bazaar/actions.
+正常情况下，社区集市仓库每隔 1 小时会自动更新索引并部署，可在 https://github.com/siyuan-note/bazaar/actions 查看部署状态。
