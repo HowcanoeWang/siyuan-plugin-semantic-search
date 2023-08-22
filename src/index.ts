@@ -104,7 +104,7 @@ export default class PluginSample extends Plugin {
             // 则使用zlib进行解压缩
             const extract2Path = nodepkg.path.join(cst.pyDownDir, 'python');
 
-            fileTool.unzipFile(zipFilePath, extract2Path);
+            await fileTool.unzipFile(zipFilePath, extract2Path);
         }
     }
 

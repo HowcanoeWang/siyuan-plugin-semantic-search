@@ -1,13 +1,19 @@
 import packageInfo from '../plugin.json'
-
 import { debug } from './notice'
+
+import { Archive } from "./libarchive.js/main.js";
+
+Archive.init({
+  workerUrl: "./plugins/siyuan-plugin-semantic-search/libarchive.js/dist/worker-bundle.js",
+});
 
 export const nodepkg = {
     fs: (window as any).require('fs'),
     https: (window as any).require('https'),
     path: (window as any).require('path'),
     os: (window as any).require('os'),
-    zlib: (window as any).require('node:zlib')
+    zlib: (window as any).require('node:zlib'),
+    Archive: Archive
 }
 
 export const diyIcon =  {
@@ -27,11 +33,12 @@ export const pyURL = {
 }
 
 export var dataDir = (window as any).siyuan.config.system.dataDir;
-if ((window as any).siyuan.config.system.os === 'windows'){
-    dataDir = dataDir.replaceAll('\\', '/')
-}
+// if ((window as any).siyuan.config.system.os === 'windows'){
+//     dataDir = dataDir.replaceAll('\\', '/')
+// }
             
 export const pyDownDir = `${dataDir}/storage/petal/${packageInfo.name}`
+export const pythonDirSYapi = `/data/storage/petal/${packageInfo.name}/python`
 
 if (!nodepkg.fs.existsSync(pyDownDir)) {
     nodepkg.fs.mkdirSync(pyDownDir, { recursive: true });
@@ -48,4 +55,11 @@ export interface Response {
         'content-length': any;
     }; 
     pipe: (arg0: any) => void;
+}
+
+export interface zipFile {
+    extract: () => File;
+    _name:string;
+    _path:string; 
+    _size: number;
 }
