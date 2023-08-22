@@ -1,5 +1,5 @@
 import { nodepkg, Response } from "./constants";
-import { debug, error } from "./utils";
+import { debug, error } from "./notice";
 
 export const downloadFile = (url: string, dest: string) => {
     // chatgpt 生成的，能跑但是不知道为什么能跑
@@ -58,8 +58,23 @@ export const downloadFile = (url: string, dest: string) => {
             }
         }).on('error', (err: any) => {
             nodepkg.fs.unlink(dest, () => {
-            reject(err);
+                reject(err);
+                error(err)
             });
         });
+    });
+};
+
+// 解压缩文件
+export const unzipFile = (zipFilePath: string, extractToPath: string) => {
+    const readStream = nodepkg.fs.createReadStream(zipFilePath);
+    const writeStream = nodepkg.fs.createWriteStream(extractToPath);
+  
+    const unzip = nodepkg.zlib.createGunzip();
+  
+    readStream.pipe(unzip).pipe(writeStream);
+  
+    writeStream.on('close', () => {
+        debug('ZIP 文件解压完成');
     });
 };

@@ -18,8 +18,8 @@ import "./index.scss";
 import * as cst from './constants'
 import { nodepkg } from "./constants";
 
-import * as internet from "./internet";
-import { debug } from "./utils";
+import * as fileTool from "./fileTool";
+import { debug } from "./notice";
 
 const STORAGE_NAME = "menu-config";
 const TAB_TYPE = "custom_tab";
@@ -85,19 +85,26 @@ export default class PluginSample extends Plugin {
             debug(`No python version available for ${key}`);
         }
 
-        // 下载链接存在
-        if (downURL) {
+        const zipFilePath = nodepkg.path.join(cst.pyDownDir, 'python.zip')
+        // 下载链接存在 且 zip不存在
+        if (downURL && !nodepkg.fs.existsSync(zipFilePath)) {
             // download with progress
-            const filePath = nodepkg.path.join(cst.pyDownDir, 'python.zip');
-
-            debug(downURL, filePath);
+            debug(downURL, zipFilePath);
 
             try {
-                await internet.downloadFile(downURL, filePath);
+                await fileTool.downloadFile(downURL, zipFilePath);
                 debug('文件下载完成');
             } catch (err) {
                 console.error('文件下载失败:', err);
             }
+        }
+
+        // zip 文件存在
+        if (nodepkg.fs.existsSync(zipFilePath)) {
+            // 则使用zlib进行解压缩
+            const extract2Path = nodepkg.path.join(cst.pyDownDir, 'python');
+
+            fileTool.unzipFile(zipFilePath, extract2Path);
         }
     }
 

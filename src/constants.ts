@@ -1,12 +1,13 @@
 import packageInfo from '../plugin.json'
 
-import { debug } from './utils'
+import { debug } from './notice'
 
 export const nodepkg = {
     fs: (window as any).require('fs'),
     https: (window as any).require('https'),
     path: (window as any).require('path'),
-    os: (window as any).require('os')
+    os: (window as any).require('os'),
+    zlib: (window as any).require('node:zlib')
 }
 
 export const diyIcon =  {
