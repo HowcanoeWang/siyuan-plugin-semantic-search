@@ -14,6 +14,7 @@ import {
     Protyle
 } from "siyuan";
 import "./index.scss";
+import download from 'download';
 
 import * as cst from './constants'
 
@@ -37,7 +38,10 @@ export default class PluginSample extends Plugin {
         this.customTab = this.addTab({
             type: TAB_TYPE,
             init() {
-                this.element.innerHTML = `<div class="plugin-sample__custom-tab">asdecdf</div>`;
+                this.element.innerHTML = `
+<div class="plugin-sample__custom-tab">
+    <p>Press Shift + Alt + F to open this tab</p>
+</div>`;
             },
             beforeDestroy() {
                 console.log("before destroy tab:", TAB_TYPE);
@@ -59,9 +63,80 @@ export default class PluginSample extends Plugin {
         console.log(this.i18n.helloPlugin);
     }
 
-    onLayoutReady() {
+    async onLayoutReady() {
         this.loadData(STORAGE_NAME);
         console.log(`frontend: ${getFrontend()}; backend: ${getBackend()}`);
+
+        // download python 
+        const os = (window as any).require('os');
+        var osinfo = getBackend();
+        var arch = os.arch();
+
+        console.log(osinfo, arch);
+
+        var downURL = undefined;
+
+        var key:string = `${osinfo}_${arch}`
+        if (cst.pyURL.hasOwnProperty(key)) {
+            downURL = cst.pyURL[key];
+        } else {
+            console.log(`No python version available for ${key}`);
+        }
+
+        // 下载链接存在
+        if (downURL) {
+            // download with progress
+            const fs  = (window as any).require('fs');
+            const https = (window as any).require('https');
+            const path = (window as any).require('path');
+
+            const filePath = path.join(cst.pyDownDir, 'python.zip');
+
+            console.log(downURL, filePath);
+
+            const downloadFile = (url: string, dest: string) => {
+                return new Promise<void>((resolve, reject) => {
+                  const file = fs.createWriteStream(dest);
+              
+                  const options = {
+                    followRedirect: true,
+                  };
+              
+                  https.get(url, options, (response) => {
+                    if (response.statusCode === 200) {
+                      response.pipe(file);
+              
+                      file.on('finish', () => {
+                        file.close();
+                        resolve();
+                      });
+                    } else if (response.statusCode === 302) {
+                      const redirectUrl = response.headers.location;
+                      console.log('重定向链接:', redirectUrl);
+              
+                      downloadFile(redirectUrl, dest)
+                        .then(resolve)
+                        .catch(reject);
+                    } else {
+                      reject(new Error(`下载失败，状态码：${response.statusCode}`));
+                    }
+                  }).on('error', (err) => {
+                    fs.unlink(dest, () => {
+                      reject(err);
+                    });
+                  });
+                });
+              };
+              
+              (async () => {
+                try {
+                  await downloadFile(downURL, filePath);
+                  console.log('文件下载完成');
+                } catch (err) {
+                  console.error('文件下载失败:', err);
+                }
+              })();
+        }
     }
 
     onunload() {
@@ -83,29 +158,5 @@ export default class PluginSample extends Plugin {
             },
         });
         console.log(tab);
-    }
-
-    private showDialog() {
-        const dialog = new Dialog({
-            title: "Info",
-            content: `<div class="b3-dialog__content">
-                        <div>API demo:</div>
-                        <div class="fn__hr"></div>
-                        <div class="plugin-sample__time">System current time: <span id="time"></span></div>
-                        <div class="fn__hr"></div>
-                        <div class="fn__hr"></div>
-                        <div>Protyle demo:</div>
-                        <div class="fn__hr"></div>
-                        <div id="protyle" style="height: 360px;"></div>
-                    </div>`,
-            width: this.isMobile ? "92vw" : "560px",
-            height: "540px",
-        });
-        new Protyle(this.app, dialog.element.querySelector("#protyle"), {
-            blockId: "20200812220555-lj3enxa",
-        });
-        fetchPost("/api/system/currentTime", {}, (response) => {
-            dialog.element.querySelector("#time").innerHTML = new Date(response.data).toString();
-        });
     }
 }

@@ -1,5 +1,5 @@
 {
-  "name": "plugin-semantic-search",
+  "name": "siyuan-plugin-semantic-search",
   "version": "0.0.1",
   "description": "A plugin for semantic search in SiYuan notes based on a large-scale model",
   "main": ".src/index.js",
