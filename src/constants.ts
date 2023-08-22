@@ -1,5 +1,14 @@
 import packageInfo from '../plugin.json'
 
+import { debug } from './utils'
+
+export const nodepkg = {
+    fs: (window as any).require('fs'),
+    https: (window as any).require('https'),
+    path: (window as any).require('path'),
+    os: (window as any).require('os')
+}
+
 export const diyIcon =  {
     iconLogo: `<symbol id="iconLogo" viewBox="0 0 24 24">
     <path d="M6 8.016q0-1.125 0.539-2.039t1.453-1.453 1.992-0.539q1.125 0 2.039 0.539t1.453 1.453 0.539 2.039q0 1.078-0.539 1.992t-1.453 1.453-2.039 0.539q-1.078 0-1.992-0.539t-1.453-1.453-0.539-1.992zM10.359 14.016q-0.844-0.047-1.922 0.094t-2.203 0.469-2.086 0.82-1.547 1.148-0.586 1.453v2.016h9.516q-0.938-1.031-1.242-2.086t-0.281-1.922 0.164-1.406 0.188-0.586zM19.453 18q0.563-0.938 0.563-2.016t-0.539-1.992-1.453-1.453-2.039-0.539q-1.078 0-1.992 0.539t-1.453 1.453-0.539 1.992q0 1.125 0.539 2.039t1.453 1.453 1.992 0.539q0.563 0 1.078-0.164t0.938-0.398l2.578 2.531 1.406-1.406zM15.984 18q-0.797 0-1.383-0.586t-0.586-1.43q0-0.797 0.586-1.383t1.383-0.586q0.844 0 1.43 0.586t0.586 1.383q0 0.844-0.586 1.43t-1.43 0.586z"></path>
@@ -23,10 +32,19 @@ if ((window as any).siyuan.config.system.os === 'windows'){
             
 export const pyDownDir = `${dataDir}/storage/petal/${packageInfo.name}`
 
-const fs = (window as any).require('fs');
-if (!fs.existsSync(pyDownDir)) {
-    fs.mkdirSync(pyDownDir, { recursive: true });
-    console.log(`已创建文件夹：${pyDownDir}`);
-  } else {
-    console.log(`文件夹已存在：${pyDownDir}`);
-  }
+if (!nodepkg.fs.existsSync(pyDownDir)) {
+    nodepkg.fs.mkdirSync(pyDownDir, { recursive: true });
+    debug(`已创建文件夹：${pyDownDir}`);
+} else {
+    debug(`文件夹已存在：${pyDownDir}`);
+}
+
+export interface Response {
+    [x: string]: any 
+    statusCode: number; 
+    headers: { 
+        'location': any; 
+        'content-length': any;
+    }; 
+    pipe: (arg0: any) => void;
+}

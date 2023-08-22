@@ -14,9 +14,12 @@ import {
     Protyle
 } from "siyuan";
 import "./index.scss";
-import download from 'download';
 
 import * as cst from './constants'
+import { nodepkg } from "./constants";
+
+import * as internet from "./internet";
+import { debug } from "./utils";
 
 const STORAGE_NAME = "menu-config";
 const TAB_TYPE = "custom_tab";
@@ -44,10 +47,10 @@ export default class PluginSample extends Plugin {
 </div>`;
             },
             beforeDestroy() {
-                console.log("before destroy tab:", TAB_TYPE);
+                debug("before destroy tab:", TAB_TYPE);
             },
             destroy() {
-                console.log("destroy tab:", TAB_TYPE);
+                debug("destroy tab:", TAB_TYPE);
             }
         });
 
@@ -60,19 +63,18 @@ export default class PluginSample extends Plugin {
             }
         });
 
-        console.log(this.i18n.helloPlugin);
+        debug(this.i18n.helloPlugin);
     }
 
     async onLayoutReady() {
         this.loadData(STORAGE_NAME);
-        console.log(`frontend: ${getFrontend()}; backend: ${getBackend()}`);
+        debug(`frontend: ${getFrontend()}; backend: ${getBackend()}`);
 
         // download python 
-        const os = (window as any).require('os');
         var osinfo = getBackend();
-        var arch = os.arch();
+        var arch = nodepkg.os.arch();
 
-        console.log(osinfo, arch);
+        debug(osinfo, arch);
 
         var downURL = undefined;
 
@@ -80,71 +82,31 @@ export default class PluginSample extends Plugin {
         if (cst.pyURL.hasOwnProperty(key)) {
             downURL = cst.pyURL[key];
         } else {
-            console.log(`No python version available for ${key}`);
+            debug(`No python version available for ${key}`);
         }
 
         // 下载链接存在
         if (downURL) {
             // download with progress
-            const fs  = (window as any).require('fs');
-            const https = (window as any).require('https');
-            const path = (window as any).require('path');
+            const filePath = nodepkg.path.join(cst.pyDownDir, 'python.zip');
 
-            const filePath = path.join(cst.pyDownDir, 'python.zip');
+            debug(downURL, filePath);
 
-            console.log(downURL, filePath);
-
-            const downloadFile = (url: string, dest: string) => {
-                return new Promise<void>((resolve, reject) => {
-                  const file = fs.createWriteStream(dest);
-              
-                  const options = {
-                    followRedirect: true,
-                  };
-              
-                  https.get(url, options, (response) => {
-                    if (response.statusCode === 200) {
-                      response.pipe(file);
-              
-                      file.on('finish', () => {
-                        file.close();
-                        resolve();
-                      });
-                    } else if (response.statusCode === 302) {
-                      const redirectUrl = response.headers.location;
-                      console.log('重定向链接:', redirectUrl);
-              
-                      downloadFile(redirectUrl, dest)
-                        .then(resolve)
-                        .catch(reject);
-                    } else {
-                      reject(new Error(`下载失败，状态码：${response.statusCode}`));
-                    }
-                  }).on('error', (err) => {
-                    fs.unlink(dest, () => {
-                      reject(err);
-                    });
-                  });
-                });
-              };
-              
-              (async () => {
-                try {
-                  await downloadFile(downURL, filePath);
-                  console.log('文件下载完成');
-                } catch (err) {
-                  console.error('文件下载失败:', err);
-                }
-              })();
+            try {
+                await internet.downloadFile(downURL, filePath);
+                debug('文件下载完成');
+            } catch (err) {
+                console.error('文件下载失败:', err);
+            }
         }
     }
 
     onunload() {
-        console.log(this.i18n.byePlugin);
+        debug(this.i18n.byePlugin);
     }
 
     private eventBusLog({detail}: any) {
-        console.log(detail);
+        debug(detail);
     }
 
     private showTab() {
@@ -157,6 +119,6 @@ export default class PluginSample extends Plugin {
                 fn: this.customTab
             },
         });
-        console.log(tab);
+        debug(tab);
     }
 }
