@@ -4,7 +4,7 @@
   "url": "https://github.com/HowcanoeWang/siyuan-plugin-semantic-search",
   "version": "0.0.1",
   "minAppVersion": "2.10.0",
-  "backends": ["windows", "linux", "darwin", "docker"],
+  "backends": ["windows", "linux", "darwin"],
   "frontends": ["desktop", "desktop-window", "browser-desktop", "brower-mobile"],
   "displayName": {
     "default": "Semantic Search",
