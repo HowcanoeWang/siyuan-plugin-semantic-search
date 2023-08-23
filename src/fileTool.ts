@@ -71,6 +71,13 @@ export async function unzipFile(zipFilePath: string, extractToPath: string) {
 
     async function readFileAsBlob(filePath: string): Promise<Blob> {
         try {
+            // macos linux path = /user/... -> 
+            // siyuan try to fetch http://127.0.0.1:50454/user/...
+            // 需要转换为相对位置（但由于env没有挂在到siyuan的路径下，所以改成相对路径也不管用）
+            // chatgpt 给的建议是转成file协议：`file://${path.resolve()}`
+            filePath = "file://" + filePath;
+            
+            debug(`[unzipFile][readFileAsBlob] filePath = ${filePath}`);
             const response = await fetch(filePath);
             if (response.ok) {
                 return await response.blob();
@@ -78,7 +85,7 @@ export async function unzipFile(zipFilePath: string, extractToPath: string) {
                 throw new Error(`读取文件时出错，状态码: ${response.status}`);
             }
         } catch (err) {
-            throw new Error('读取文件时出错');
+            throw new Error(`读取文件时出错: ${err}`);
         }
     }
 
@@ -92,7 +99,7 @@ export async function unzipFile(zipFilePath: string, extractToPath: string) {
         data.append("file", file);
         data.append("isDir", 'false');
         data.append("modTime", file.lastModified.toString());
-        console.log(`API put file: ${file.name}, ${path}, ${file.size}`)
+        // console.log(`API put file: ${file.name}, ${path}, ${file.size}`)
         let res = await fetch("/api/file/putFile", {
             method: "POST",
             body: data,
@@ -128,13 +135,14 @@ export async function unzipFile(zipFilePath: string, extractToPath: string) {
 
     // extract all files by fs.writeFile
     let fileArray = flatten(filesObj);
+    window.fileArray = fileArray;
     debug(fileArray);
 
-    for (let fIdx of fileArray) {
+    for (let i = 0; i < fileArray.length; i++) {
+        let fIdx = fileArray[i]
         // 这里可以用i来更新一下解压的进度条
         let fpath = nodepkg.path.join(extractToPath, fIdx._path);
-        let apipath = fpath.replace(cst.dataDir, '')
-        apipath = '/data' + apipath.replaceAll('\\', '/');
+        let apipath = turn2apiPath(fpath);
 
         // js package not d.ts annotation
         let file = await fIdx.extract(); 
@@ -145,6 +153,21 @@ export async function unzipFile(zipFilePath: string, extractToPath: string) {
         if (jsreturn.code !== 0) {
             debug(`Got problem when zipping file to ${apipath}, error code:`, jsreturn);
         }
+
+        const progress = (i  / fileArray.length) * 100;     
+        debug(`解压进度：${progress.toFixed(2)} % | API put file [${i}]: ${file.name}, ${apipath}, ${file.size}`); 
     }
 
 };
+
+export function turn2apiPath (fullPath: string, nodataheader:boolean=false) {
+    let apipath = fullPath.replace(cst.dataDir, '')
+
+    if (nodataheader) {
+        apipath = apipath.replaceAll('\\', '/');
+    } else {
+        apipath = '/data' + apipath.replaceAll('\\', '/');
+    }
+
+    return apipath;
+}
