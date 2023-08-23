@@ -20,6 +20,7 @@ import { nodepkg } from "./constants";
 
 import * as fileTool from "./fileTool";
 import { debug } from "./notice";
+import * as terminal from "./terminal";
 
 const STORAGE_NAME = "menu-config";
 const TAB_TYPE = "custom_tab";
@@ -31,6 +32,8 @@ export default class PluginSample extends Plugin {
     private isMobile: boolean;
 
     onload() {
+        terminal.loadXterm();
+
         this.data[STORAGE_NAME] = {readonlyText: "Readonly"};
 
         const frontEnd = getFrontend();
@@ -42,9 +45,11 @@ export default class PluginSample extends Plugin {
             type: TAB_TYPE,
             init() {
                 this.element.innerHTML = `
-<div class="plugin-sample__custom-tab">
-    <p>Press Shift + Alt + F to open this tab</p>
+<div class="plugin-sample__custom-tab" style="flex-direction: column">
+    <h1 style="margin-bottom: 30px;">Press Shift + Alt + F to open this tab</h1>
+    <div id="terminal"></div>
 </div>`;
+                terminal.initXterm();
             },
             beforeDestroy() {
                 debug("before destroy tab:", TAB_TYPE);
@@ -64,6 +69,8 @@ export default class PluginSample extends Plugin {
         });
 
         debug(this.i18n.helloPlugin);
+
+        // 可以把windown.siyuan.python.path 也添加到环境变量里
     }
 
     async onLayoutReady() {
@@ -99,11 +106,10 @@ export default class PluginSample extends Plugin {
             }
         }
 
+        const extract2Path = nodepkg.path.join(cst.pyDownDir, 'python');
         // zip 文件存在
-        if (nodepkg.fs.existsSync(zipFilePath)) {
+        if (nodepkg.fs.existsSync(zipFilePath) && !nodepkg.fs.existsSync(extract2Path)) {
             // 则使用zlib进行解压缩
-            const extract2Path = nodepkg.path.join(cst.pyDownDir, 'python');
-
             await fileTool.unzipFile(zipFilePath, extract2Path);
         }
     }

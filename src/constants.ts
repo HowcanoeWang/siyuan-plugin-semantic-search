@@ -22,7 +22,7 @@ export const diyIcon =  {
     </symbol>`
 }
 
-export const pyURL = {
+export const pyURL: DownURL = {
     "windows_x86": "https://gitee.com/HowcanoeWang/python3-embeddable/releases/download/v1.0.0/python3-windows-3.10.4-win32.zip",
     "windows_x64": "https://gitee.com/HowcanoeWang/python3-embeddable/releases/download/v1.0.0/python3-windows-3.10.4-amd64.zip",
     "darwin_arm64": "https://gitee.com/HowcanoeWang/python3-embeddable/releases/download/v1.0.0/python3-macos-3.10.4-universal2.zip",
@@ -62,4 +62,8 @@ export interface zipFile {
     _name:string;
     _path:string; 
     _size: number;
+}
+
+export interface DownURL {
+    [key:string]: string
 }
