@@ -22,6 +22,8 @@ import * as fileTool from "./fileTool";
 import { debug } from "./notice";
 import * as terminal from "./terminal";
 
+import packageInfo from '../plugin.json'
+
 const STORAGE_NAME = "menu-config";
 const TAB_TYPE = "custom_tab";
 const DOCK_TYPE = "dock_tab";
@@ -32,6 +34,8 @@ export default class PluginSample extends Plugin {
     private isMobile: boolean;
 
     onload() {
+        // todo: add /envs/ to syncignore file
+        
         terminal.loadXterm();
 
         this.data[STORAGE_NAME] = {readonlyText: "Readonly"};
@@ -39,7 +43,7 @@ export default class PluginSample extends Plugin {
         const frontEnd = getFrontend();
         this.isMobile = frontEnd === "mobile" || frontEnd === "browser-mobile";
         // 图标的制作参见帮助文档
-        this.addIcons(cst.diyIcon.iconLogo);
+        this.addIcons(cst.diyIcon.searchPeople);
 
         this.customTab = this.addTab({
             type: TAB_TYPE,
@@ -106,7 +110,7 @@ export default class PluginSample extends Plugin {
             }
         }
 
-        const extract2Path = nodepkg.path.join(cst.pyDownDir, 'python');
+        const extract2Path = nodepkg.path.join(cst.pyDownDir, packageInfo.name);
         // zip 文件存在
         if (nodepkg.fs.existsSync(zipFilePath) && !nodepkg.fs.existsSync(extract2Path)) {
             // 则使用zlib进行解压缩
@@ -126,7 +130,7 @@ export default class PluginSample extends Plugin {
         const tab = openTab({
             app: this.app,
             custom: {
-                icon: "iconLogo",
+                icon: "searchPeople",
                 title: "Semantic Search",
                 // id: this.name + TAB_TYPE
                 fn: this.customTab
