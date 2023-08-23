@@ -2,9 +2,8 @@
 node_modules
 .DS_Store
 .eslintcache
-dist
+/dist/*
 package.zip
 index.css
 index.js
 i18n
-chrome_server
