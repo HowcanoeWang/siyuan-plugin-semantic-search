@@ -1,18 +1,18 @@
 {
   "name": "sython",
   "author": "HowcanoeWang",
-  "url": "https://github.com/HowcanoeWang/siyuan-plugin-semantic-search",
+  "url": "https://github.com/HowcanoeWang/sython",
   "version": "0.0.1",
   "minAppVersion": "2.10.0",
   "backends": ["windows", "linux", "darwin"],
   "frontends": ["desktop", "desktop-window"],
   "displayName": {
-    "default": "sython",
-    "zh_CN": "sython"
+    "default": "Sython",
+    "zh_CN": "Sython"
   },
   "description": {
-    "default": "A plugin for installing python into SiYuan notes",
-    "zh_CN": "一个在思源内核中安装python支持的基础插件"
+    "default": "A plugin for installing python into current SiYuan workspace",
+    "zh_CN": "一个在思源当前工作空间中安装python支持的基础插件"
   },
   "readme": {
     "default": "README_en_US.md",
