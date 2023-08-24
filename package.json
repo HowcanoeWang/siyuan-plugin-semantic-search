@@ -1,7 +1,7 @@
 {
-  "name": "siyuan-plugin-semantic-search",
+  "name": "sython",
   "version": "0.0.1",
-  "description": "A plugin for semantic search in SiYuan notes based on a large-scale model",
+  "description": "A plugin for installing python into SiYuan notes",
   "main": ".src/index.js",
   "scripts": {
     "lint": "eslint . --fix --cache",

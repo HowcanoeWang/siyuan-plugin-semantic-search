@@ -1,18 +1,18 @@
 {
-  "name": "siyuan-plugin-semantic-search",
+  "name": "sython",
   "author": "HowcanoeWang",
   "url": "https://github.com/HowcanoeWang/siyuan-plugin-semantic-search",
   "version": "0.0.1",
   "minAppVersion": "2.10.0",
   "backends": ["windows", "linux", "darwin"],
-  "frontends": ["desktop", "desktop-window", "browser-desktop", "brower-mobile"],
+  "frontends": ["desktop", "desktop-window"],
   "displayName": {
-    "default": "Semantic Search",
-    "zh_CN": "语义搜索"
+    "default": "sython",
+    "zh_CN": "sython"
   },
   "description": {
-    "default": "A plugin for semantic search in SiYuan notes based on a large-scale model",
-    "zh_CN": "一个基于大模型的思源笔记语义搜索插件"
+    "default": "A plugin for installing python into SiYuan notes",
+    "zh_CN": "一个在思源内核中安装python支持的基础插件"
   },
   "readme": {
     "default": "README_en_US.md",
