@@ -1,9 +1,11 @@
 import { debug } from './notice'
-
+import packageInfo from '../plugin.json'
 import { Archive } from "./libarchive.js/main.js";
 
+export const pluginName = packageInfo.name;
+
 Archive.init({
-  workerUrl: "./plugins/siyuan-plugin-semantic-search/libarchive.js/dist/worker-bundle.js",
+  workerUrl: `./plugins/${pluginName}/libarchive.js/dist/worker-bundle.js`,
 });
 
 export const nodepkg = {
@@ -37,13 +39,6 @@ export var dataDir = (window as any).siyuan.config.system.dataDir;
 // }
             
 export const pyDownDir = `${dataDir}/storage/envs/`
-
-if (!nodepkg.fs.existsSync(pyDownDir)) {
-    nodepkg.fs.mkdirSync(pyDownDir, { recursive: true });
-    debug(`已创建文件夹：${pyDownDir}`);
-} else {
-    debug(`文件夹已存在：${pyDownDir}`);
-}
 
 export interface Response {
     [x: string]: any 

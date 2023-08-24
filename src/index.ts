@@ -22,8 +22,6 @@ import * as fileTool from "./fileTool";
 import { debug } from "./notice";
 import * as terminal from "./terminal";
 
-import packageInfo from '../plugin.json'
-
 const STORAGE_NAME = "menu-config";
 const TAB_TYPE = "custom_tab";
 const DOCK_TYPE = "dock_tab";
@@ -35,7 +33,13 @@ export default class PluginSample extends Plugin {
 
     onload() {
         // todo: add /envs/ to syncignore file
-        
+        if (!nodepkg.fs.existsSync(cst.pyDownDir)) {
+            nodepkg.fs.mkdirSync(cst.pyDownDir, { recursive: true });
+            debug(`已创建文件夹：${cst.pyDownDir}`);
+        } else {
+            debug(`文件夹已存在：${cst.pyDownDir}`);
+        }
+
         terminal.loadXterm();
 
         this.data[STORAGE_NAME] = {readonlyText: "Readonly"};
@@ -64,10 +68,9 @@ export default class PluginSample extends Plugin {
         });
 
         this.addCommand({
-            langKey: "showDialog",
-            hotkey: "⇧⌥M",
+            langKey: "showTermainal",
+            hotkey: "⇧⌘\`",
             callback: () => {
-                // this.showDialog();
                 this.showTab();
             }
         });
@@ -110,7 +113,14 @@ export default class PluginSample extends Plugin {
             }
         }
 
-        const extract2Path = nodepkg.path.join(cst.pyDownDir, packageInfo.name);
+        var extract2Path: string;
+
+        if (cst.pluginName === 'sython') {
+            extract2Path = nodepkg.path.join(cst.pyDownDir, 'base');
+        } else {
+            extract2Path = nodepkg.path.join(cst.pyDownDir, cst.pluginName);
+        }
+        
         // zip 文件存在
         if (nodepkg.fs.existsSync(zipFilePath) && !nodepkg.fs.existsSync(extract2Path)) {
             // 则使用zlib进行解压缩

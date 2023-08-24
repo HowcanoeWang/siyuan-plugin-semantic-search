@@ -1,15 +1,16 @@
 import { Terminal } from 'xterm';
+import { pluginName } from './constants';
 
 export function loadXterm() {
     // 添加<link>
     const link = document.createElement('link');
     link.rel = 'stylesheet';
-    link.href = "./plugins/siyuan-plugin-semantic-search/xterm.js/xterm.css";
+    link.href = `./plugins/${pluginName}/xterm.js/xterm.css`;
     document.head.appendChild(link);
 
     // 添加<script>
     const script = document.createElement('script');
-    script.src = "./plugins/siyuan-plugin-semantic-search/xterm.js/xterm.js";
+    script.src = `./plugins/${pluginName}/xterm.js/xterm.js`;
     document.head.appendChild(script);
 }
 
