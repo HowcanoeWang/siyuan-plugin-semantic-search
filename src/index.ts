@@ -40,6 +40,24 @@ export default class Sython extends Plugin {
             debug(`文件夹已存在：${cst.pyDownDir}`);
         }
 
+        const ws = new WebSocket("ws://localhost:8765");
+
+        ws.onopen = function(event) {
+            debug(`WebSocket is open now. readyState=${ws.readyState}`);
+        };
+          
+        ws.onclose = function(event) {
+            debug(`WebSocket disconnected, readyState=${ws.readyState}`);
+        };
+        
+        ws.onerror= function(error) {
+            debug(`WebSocket error: readyState=${ws.readyState}`, error);
+        };
+
+        window.sython = {
+            ws: ws
+        };
+
         terminal.loadXterm();
 
         this.data[STORAGE_NAME] = {readonlyText: "Readonly"};
@@ -140,14 +158,21 @@ export default class Sython extends Plugin {
         } else {
             python_prefix = `source ${envDir}/activate.sh && chmod +x ${envDir}/bin/python3.10 && python3.10`;
         }
-        // var [stdout, stderr] = terminal.shellRun(
-        //     `${python_prefix} ${backendPy}`,
-        //     cwd
-        // );
+
+        // 运行websocket
+        if (window.sython.ws.readyState !== 1) {
+            // var [stdout, stderr] = terminal.shellRun(
+            //     `${python_prefix} ${backendPy}`,
+            //     cwd
+            // );
+        }
+
     }
 
     onunload() {
         debug(this.i18n.byePlugin);
+        // close socket
+        window.sython.ws.send('exit');
     }
 
     private eventBusLog({detail}: any) {

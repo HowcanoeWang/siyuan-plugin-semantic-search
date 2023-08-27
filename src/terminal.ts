@@ -23,9 +23,7 @@ export function initXterm() {
     term.writeln('SiYuan XTerm [Ver 0.0.1]');
     term.write('SY \x1B[1;3;31m~\x1B[0m $ ');
 
-    const socket = new WebSocket("ws://localhost:8765");
-
-    socket.onmessage = (event) => {
+    window.sython.ws.onmessage = (event) => {
         term.write(event.data);
     }
 
@@ -34,7 +32,7 @@ export function initXterm() {
         let code = e.domEvent.code;
         if (code === 'Enter'){
             console.log('cmd:',cmd);
-            socket.send(cmd);
+            window.sython.ws.send(cmd);
             cmd = '';
             term.write(e.key + '\nSY \x1B[1;3;31m~\x1B[0m $ ');
         }else if (code === 'Backspace') {
@@ -74,6 +72,8 @@ export function shellRun(command: string, cwd: string, shell: boolean = true) {
     spawnObj.on('exit', (code: any) => {
         console.log(`child process exited with code ${code}`);
     });
+
+    window.sython.pyws = spawnObj;
 
     return [stdout, stderr];
 }

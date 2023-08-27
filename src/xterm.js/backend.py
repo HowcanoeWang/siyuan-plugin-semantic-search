@@ -1,8 +1,9 @@
 import sys
 import subprocess
-import time
 import importlib.util
 import asyncio
+# import pty
+# import os
 
 print("Current Python path: ", sys.executable)
 sys.stdout.flush()
@@ -34,18 +35,29 @@ if ws in sys.modules:
     # lanuch the websocket server
     from websockets.server import serve
 
-    async def echo(websocket):
-        async for message in websocket:
-            await websocket.send(message)
+    # async def echo(websocket):
+    #     async for message in websocket:
+    #         await websocket.send(message)
 
-    async def handler(websocket):
-        while True:
-            message = await websocket.recv()
+    async def shell(websocket):
+        # master, slave = pty.openpty()
+        # while True:
+        async for message in websocket:
+            # message = await websocket.recv()
             print("[py] websockets: " +message)
             sys.stdout.flush()
 
+            if message == "exit":
+                sys.exit()
+
+        #     os.write(master, message.encode())
+
+        # # Close the pty
+        # os.close(master)
+        # os.close(slave)
+
     async def main():
-        async with serve(handler, "localhost", 8765):
+        async with serve(shell, "localhost", 8765):
             print('Launch local server at [localhost:8765]')
             sys.stdout.flush()
             await asyncio.Future()  # run forever

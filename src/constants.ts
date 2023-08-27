@@ -3,6 +3,14 @@ import packageInfo from '../plugin.json'
 
 export const pluginName = packageInfo.name;
 
+declare global {
+    interface Window { 
+        sython : {
+            ws: WebSocket;
+        } 
+    }
+}
+
 export const nodepkg = {
     fs: (window as any).require('fs'),
     https: (window as any).require('https'),
