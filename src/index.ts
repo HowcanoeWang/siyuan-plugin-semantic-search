@@ -124,25 +124,29 @@ export default class Sython extends Plugin {
         // zip 文件存在
         if (nodepkg.fs.existsSync(zipFilePath) && !nodepkg.fs.existsSync(extract2Path)) {
             // 则使用zlib进行解压缩
-            const outjs = await fileTool.unzipFile(zipFilePath, extract2Path+'\\');
+            const outjs = await fileTool.unzipFile(zipFilePath, extract2Path+'/');
             debug(`[unzip] unzip '${zipFilePath}' to '${extract2Path}', code: ${outjs.code}, msg: ${outjs.msg}`);
         }
 
         // 尝试运行子进程
         const {spawn}  = (window as any).require('child_process');
-        // const spawnObj = spawn('ping', ['127.0.0.1'], {encoding: 'utf-8'});
-        const spawnObj = spawn('python.exe', [`${cst.dataDir}/plugins/sython/xterm.js/backend.py`], {cwd: 'C:\\Users\\hwang\\Documents\\SiYuanDev\\data\\storage\\envs\\base\\', encoding: 'utf-8'});
-
-        spawnObj.stdout.on('data', function(chunk) {
+        let spawnObj
+        if (getBackend() === 'windows') {
+            spawnObj = spawn('python.exe', [`${cst.dataDir}/plugins/sython/xterm.js/backend.py`], {cwd: `${cst.dataDir}/storage/envs/base/`, encoding: 'utf-8'});
+        } else {
+            spawnObj = spawn(`source ./activate.sh && chmod +x ./bin/python3.10 && python3.10 ${cst.dataDir}/plugins/sython/xterm.js/backend.py`, {encoding: 'utf-8', shell: true, cwd: `${cst.dataDir}/storage/envs/base/`});
+        }
+        
+        spawnObj.stdout.on('data', function(chunk: any) {
             console.log(chunk.toString());
         });
-        spawnObj.stderr.on('data', (data) => {
+        spawnObj.stderr.on('data', (data: any) => {
             console.log(data.toString());
         });
-        spawnObj.on('close', function(code) {
+        spawnObj.on('close', function(code: string) {
             console.log('close code : ' + code);
         })
-        spawnObj.on('exit', (code) => {
+        spawnObj.on('exit', (code: any) => {
             console.log(`child process exited with code ${code}`);
         });
     }

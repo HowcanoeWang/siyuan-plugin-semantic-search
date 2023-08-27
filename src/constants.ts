@@ -28,9 +28,9 @@ export const pyURL: DownURL = {
 }
 
 export var dataDir = (window as any).siyuan.config.system.dataDir;
-// if ((window as any).siyuan.config.system.os === 'windows'){
-//     dataDir = dataDir.replaceAll('\\', '/')
-// }
+if ((window as any).siyuan.config.system.os === 'windows'){
+    dataDir = dataDir.replaceAll('\\', '/')
+}
             
 export const pyDownDir = `${dataDir}/storage/envs/`
 

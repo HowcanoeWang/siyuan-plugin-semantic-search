@@ -69,6 +69,8 @@ export const downloadFile = (url: string, dest: string) => {
 // 解压缩文件
 export async function unzipFile(zipFilePath: string, extractToPath: string) {
 
+    debug(`zipPath: ${zipFilePath}, path: ${extractToPath}`);
+
     let res = await fetch("/api/archive/unzip", {
         method: "POST",
         // body: data,
