@@ -1,1 +1,3 @@
-print('hello world')
+import sys
+
+print("Current Python path: ", sys.executable)

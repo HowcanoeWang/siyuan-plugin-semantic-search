@@ -126,6 +126,24 @@ export default class PluginSample extends Plugin {
             // 则使用zlib进行解压缩
             await fileTool.unzipFile(zipFilePath, extract2Path);
         }
+
+        // 尝试运行子进程
+        const {spawn}  = (window as any).require('child_process');
+        // const spawnObj = spawn('ping', ['127.0.0.1'], {encoding: 'utf-8'});
+        const spawnObj = spawn('python.exe', [`${cst.dataDir}/plugins/sython/xterm.js/backend.py`], {cwd: 'C:\\Users\\hwang\\Documents\\SiYuanDev\\data\\storage\\envs\\base\\', encoding: 'utf-8'});
+
+        spawnObj.stdout.on('data', function(chunk) {
+            console.log(chunk.toString());
+        });
+        spawnObj.stderr.on('data', (data) => {
+            console.log(data.toString());
+        });
+        spawnObj.on('close', function(code) {
+            console.log('close code : ' + code);
+        })
+        spawnObj.on('exit', (code) => {
+            console.log(`child process exited with code ${code}`);
+        });
     }
 
     onunload() {
