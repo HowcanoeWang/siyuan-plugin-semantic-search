@@ -129,26 +129,21 @@ export default class Sython extends Plugin {
         }
 
         // 尝试运行子进程
-        const {spawn}  = (window as any).require('child_process');
-        let spawnObj
+        const envDir = `${cst.dataDir}/storage/envs/base`;
+        const cwd = `${cst.dataDir}/`
+        const backendPy = `${cst.dataDir}/plugins/sython/xterm.js/backend.py`;
+
+        let python_prefix: string = '';
+
         if (getBackend() === 'windows') {
-            spawnObj = spawn('python.exe', [`${cst.dataDir}/plugins/sython/xterm.js/backend.py`], {cwd: `${cst.dataDir}/storage/envs/base/`, encoding: 'utf-8'});
+            python_prefix = `${envDir}/python.exe`;
         } else {
-            spawnObj = spawn(`source ./activate.sh && chmod +x ./bin/python3.10 && python3.10 ${cst.dataDir}/plugins/sython/xterm.js/backend.py`, {encoding: 'utf-8', shell: true, cwd: `${cst.dataDir}/storage/envs/base/`});
+            python_prefix = `source ${envDir}/activate.sh && chmod +x ${envDir}/bin/python3.10 && python3.10`;
         }
-        
-        spawnObj.stdout.on('data', function(chunk: any) {
-            console.log(chunk.toString());
-        });
-        spawnObj.stderr.on('data', (data: any) => {
-            console.log(data.toString());
-        });
-        spawnObj.on('close', function(code: string) {
-            console.log('close code : ' + code);
-        })
-        spawnObj.on('exit', (code: any) => {
-            console.log(`child process exited with code ${code}`);
-        });
+        // var [stdout, stderr] = terminal.shellRun(
+        //     `${python_prefix} ${backendPy}`,
+        //     cwd
+        // );
     }
 
     onunload() {
