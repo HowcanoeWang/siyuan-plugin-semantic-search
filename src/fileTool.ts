@@ -69,95 +69,15 @@ export const downloadFile = (url: string, dest: string) => {
 // 解压缩文件
 export async function unzipFile(zipFilePath: string, extractToPath: string) {
 
-    async function readFileAsBlob(filePath: string): Promise<Blob> {
-        try {
-            // macos linux path = /user/... -> 
-            // siyuan try to fetch http://127.0.0.1:50454/user/...
-            // 需要转换为相对位置（但由于env没有挂在到siyuan的路径下，所以改成相对路径也不管用）
-            // chatgpt 给的建议是转成file协议：`file://${path.resolve()}`
-            filePath = "file://" + filePath;
-            
-            debug(`[unzipFile][readFileAsBlob] filePath = ${filePath}`);
-            const response = await fetch(filePath);
-            if (response.ok) {
-                return await response.blob();
-            } else {
-                throw new Error(`读取文件时出错，状态码: ${response.status}`);
-            }
-        } catch (err) {
-            throw new Error(`读取文件时出错: ${err}`);
-        }
-    }
-
-    /**
-     *  The code inspired from:
-     *  https://github.com/leolee9086/themeEditor/blob/02c22e8651b52478fbf79e12ed1059e407ec52cf/polyfills/package.js#L34-L51
-     */
-    let writeFileDirectly = async (file:File, path:string) => {
-        let data = new FormData();
-        data.append("path", path);
-        data.append("file", file);
-        data.append("isDir", 'false');
-        data.append("modTime", file.lastModified.toString());
-        // console.log(`API put file: ${file.name}, ${path}, ${file.size}`)
-        let res = await fetch("/api/file/putFile", {
-            method: "POST",
-            body: data,
-        });
-        return await res.json();
-    };
-
-    /**
-     * The code inspired from:
-     * https://github.com/leolee9086/themeEditor/blob/02c22e8651b52478fbf79e12ed1059e407ec52cf/polyfills/package.js#L86-L100
-     */
-    function flatten(filesObj: cst.zipFile[]): cst.zipFile[] {
-        let flatList: cst.zipFile[] = [];
-        let flat = (subObj) => {
-          Object.getOwnPropertyNames(subObj).forEach((name) => {
-            if (subObj[name] && subObj[name]._path) {
-              flatList.push(subObj[name]);
-            } else {
-              flat(subObj[name]);
-            }
-          });
-        };
-        flat(filesObj);
-        debug(flatList);
-        return flatList;
-    }
-
-    let fileBlob = await readFileAsBlob(zipFilePath);
-    let archive = await nodepkg.Archive.open(fileBlob as File);
-    
-    let filesObj = await archive.getFilesObject();
-    debug(filesObj);
-
-    // extract all files by fs.writeFile
-    let fileArray = flatten(filesObj);
-    window.fileArray = fileArray;
-    debug(fileArray);
-
-    for (let i = 0; i < fileArray.length; i++) {
-        let fIdx = fileArray[i]
-        // 这里可以用i来更新一下解压的进度条
-        let fpath = nodepkg.path.join(extractToPath, fIdx._path);
-        let apipath = turn2apiPath(fpath);
-
-        // js package not d.ts annotation
-        let file = await fIdx.extract(); 
-        // console.log(file.name, fpath, apipath, file.size);
-
-        // siyuan api to write
-        let jsreturn = await writeFileDirectly(file, apipath);
-        if (jsreturn.code !== 0) {
-            debug(`Got problem when zipping file to ${apipath}, error code:`, jsreturn);
-        }
-
-        const progress = (i  / fileArray.length) * 100;     
-        debug(`解压进度：${progress.toFixed(2)} % | API put file [${i}]: ${file.name}, ${apipath}, ${file.size}`); 
-    }
-
+    let res = await fetch("/api/archive/unzip", {
+        method: "POST",
+        // body: data,
+        body: JSON.stringify({
+            "path": extractToPath,
+            "zipPath": zipFilePath
+        })
+    });
+    return await res.json();
 };
 
 export function turn2apiPath (fullPath: string, nodataheader:boolean=false) {

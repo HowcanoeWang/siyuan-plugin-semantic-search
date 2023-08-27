@@ -1,12 +1,7 @@
 import { debug } from './notice'
 import packageInfo from '../plugin.json'
-import { Archive } from "./libarchive.js/main.js";
 
 export const pluginName = packageInfo.name;
-
-Archive.init({
-  workerUrl: `./plugins/${pluginName}/libarchive.js/dist/worker-bundle.js`,
-});
 
 export const nodepkg = {
     fs: (window as any).require('fs'),
@@ -14,7 +9,6 @@ export const nodepkg = {
     path: (window as any).require('path'),
     os: (window as any).require('os'),
     zlib: (window as any).require('node:zlib'),
-    Archive: Archive
 }
 
 export const diyIcon =  {

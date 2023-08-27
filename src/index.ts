@@ -26,7 +26,7 @@ const STORAGE_NAME = "menu-config";
 const TAB_TYPE = "custom_tab";
 const DOCK_TYPE = "dock_tab";
 
-export default class PluginSample extends Plugin {
+export default class Sython extends Plugin {
 
     private customTab: () => IModel;
     private isMobile: boolean;
@@ -124,7 +124,8 @@ export default class PluginSample extends Plugin {
         // zip 文件存在
         if (nodepkg.fs.existsSync(zipFilePath) && !nodepkg.fs.existsSync(extract2Path)) {
             // 则使用zlib进行解压缩
-            await fileTool.unzipFile(zipFilePath, extract2Path);
+            const outjs = await fileTool.unzipFile(zipFilePath, extract2Path+'\\');
+            debug(`[unzip] unzip '${zipFilePath}' to '${extract2Path}', code: ${outjs.code}, msg: ${outjs.msg}`);
         }
 
         // 尝试运行子进程
