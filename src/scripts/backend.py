@@ -2,6 +2,7 @@ import sys
 import subprocess
 import importlib.util
 import asyncio
+import signal
 # import pty
 # import os
 
@@ -40,26 +41,25 @@ if ws in sys.modules:
     #         await websocket.send(message)
 
     async def shell(websocket):
-        # master, slave = pty.openpty()
-        # while True:
-        async for message in websocket:
-            # message = await websocket.recv()
-            print("[py] websockets: " +message)
-            sys.stdout.flush()
+        try:
+            async for message in websocket:
+                # message = await websocket.recv()
+                print("[py] websockets: " +message)
+                sys.stdout.flush()
 
-            if message == "exit":
-                sys.exit()
+                if message == "exit":
+                    sys.exit()
+        except websockets.exceptions.ConnectionClosed:
+            print("Client closed the connection")
 
-        #     os.write(master, message.encode())
-
-        # # Close the pty
-        # os.close(master)
-        # os.close(slave)
 
     async def main():
+        stop = asyncio.Future()
         async with serve(shell, "localhost", 8765):
             print('Launch local server at [localhost:8765]')
             sys.stdout.flush()
-            await asyncio.Future()  # run forever
+            # await asyncio.Future()  # run forever
+            await stop
+            await shell.close()
 
     asyncio.run(main())

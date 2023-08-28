@@ -149,7 +149,7 @@ export default class Sython extends Plugin {
         // 尝试运行子进程
         const envDir = `${cst.dataDir}/storage/envs/base`;
         const cwd = `${cst.dataDir}/`
-        const backendPy = `${cst.dataDir}/plugins/sython/xterm.js/backend.py`;
+        const backendPy = `${cst.dataDir}/plugins/sython/scripts/backend.py`;
 
         let python_prefix: string = '';
 
@@ -160,12 +160,12 @@ export default class Sython extends Plugin {
         }
 
         // 运行websocket
-        if (window.sython.ws.readyState !== 1) {
-            // var [stdout, stderr] = terminal.shellRun(
-            //     `${python_prefix} ${backendPy}`,
-            //     cwd
-            // );
-        }
+        // if (window.sython.ws.readyState !== 1) {
+        // var [stdout, stderr] = terminal.shellRun(
+        //     `${python_prefix} ${backendPy}`,
+        //     cwd
+        // );
+        // }
 
     }
 

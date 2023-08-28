@@ -6,12 +6,12 @@ export function loadXterm() {
     // 添加<link>
     const link = document.createElement('link');
     link.rel = 'stylesheet';
-    link.href = `./plugins/${pluginName}/xterm.js/xterm.css`;
+    link.href = `./plugins/${pluginName}/static/xterm.css`;
     document.head.appendChild(link);
 
     // 添加<script>
     const script = document.createElement('script');
-    script.src = `./plugins/${pluginName}/xterm.js/xterm.js`;
+    script.src = `./plugins/${pluginName}/static/xterm.js`;
     document.head.appendChild(script);
 }
 
@@ -45,13 +45,13 @@ export function initXterm() {
     }) 
 }
 
-export function shellRun(command: string, cwd: string, shell: boolean = true) {
+export function shellRun(command: string, cwd: string, shell: boolean = true, detached: boolean = false) {
     const {spawn}  = (window as any).require('child_process');
     let spawnObj;
 
     debug(`[shellRun] ${command} @ ${cwd}`);
 
-    spawnObj = spawn(command, {cwd: cwd, shell: shell});
+    spawnObj = spawn(command, {cwd: cwd, shell: shell, detached: detached});
 
     let stdout: string = '';
     let stderr: string = '';
@@ -68,12 +68,15 @@ export function shellRun(command: string, cwd: string, shell: boolean = true) {
     });
     spawnObj.on('close', function(code: string) {
         console.log('close code : ' + code);
+        window.sython.ws.send('exit');
     })
     spawnObj.on('exit', (code: any) => {
         console.log(`child process exited with code ${code}`);
     });
 
-    window.sython.pyws = spawnObj;
+    if (detached) {
+        spawnObj.unref();
+    }
 
     return [stdout, stderr];
 }
