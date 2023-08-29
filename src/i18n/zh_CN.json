@@ -5,8 +5,9 @@
   "byeMenu": "再见，菜单！",
   "helloPlugin": "你好，插件！",
   "byePlugin": "再见，插件！",
-  "showTerminal": "显示终端",
+  "showTerminal": "显示SY终端",
   "removedData": "数据已删除",
   "confirmRemove": "确认删除 ${name} 中的数据？",
-  "insertEmoji": "插入表情"
+  "insertEmoji": "插入表情",
+  "syterm": "SY终端"
 }

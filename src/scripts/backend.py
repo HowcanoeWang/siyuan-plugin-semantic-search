@@ -6,32 +6,31 @@ import time
 # import pty
 # import os
 
+def wsprint(*args):
+    print(*args)
+    sys.stdout.flush()
+
 welcome_str = '$$ Sython Console Backend $$'
 welcome_bar = '$' * len(welcome_str)
-print(f'\n\n{welcome_bar}\n{welcome_str}\n{welcome_bar}\n')
-sys.stdout.flush()
+wsprint(f'\n\n{welcome_bar}\n{welcome_str}\n{welcome_bar}\n')
 
 # check if websocket is installed
 ws = 'websockets'
 if ws in sys.modules:
-    print(f"{ws!r} already in sys.modules")
-    sys.stdout.flush()
+    wsprint(f"{ws!r} already in sys.modules")
 elif (spec := importlib.util.find_spec(ws)) is not None:
     # If you choose to perform the actual import ...
     module = importlib.util.module_from_spec(spec)
     sys.modules[ws] = module
     spec.loader.exec_module(module)
-    print(f"{ws!r} has been imported")
-    sys.stdout.flush()
+    wsprint(f"{ws!r} has been imported")
 else:
-    print(f"can't find the {ws!r} module, try to install")
-    sys.stdout.flush()
+    wsprint(f"can't find the {ws!r} module, try to install")
     p = subprocess.Popen([sys.executable, "-m", "pip", "install", "websockets", "-i", "https://pypi.tuna.tsinghua.edu.cn/simple"],
                           stdout=subprocess.PIPE,
                           stderr=subprocess.STDOUT)
     for line in iter(p.stdout.readline, b''):
-        print(">>> " + line.decode('utf-8').rstrip())
-        sys.stdout.flush()
+        wsprint(">>> " + line.decode('utf-8').rstrip())
 
 
 if ws in sys.modules:
@@ -41,8 +40,7 @@ if ws in sys.modules:
     async def shell(websocket):
         async for message in websocket:
             # message = await websocket.recv()
-            print("[py] websockets: " +message)
-            sys.stdout.flush()
+            wsprint("[py] websockets: " +message)
 
             if message == "exit":
                 sys.exit()
@@ -52,8 +50,7 @@ if ws in sys.modules:
 
         stop = asyncio.Future()
         async with serve(shell, "localhost", port_num):
-            print(f'Launch local server at [localhost:{port_num}]')
-            sys.stdout.flush()
+            wsprint(f'Launch local server at [localhost:{port_num}]')
             # await asyncio.Future()  # run forever
 
             # while True:
@@ -68,4 +65,4 @@ if ws in sys.modules:
     try:
         asyncio.run(main())
     except Exception as e:
-        print(f'[Error] The port seems been taken: {e}')
+        wsprint(f'[Error] The port seems been taken: {e}')

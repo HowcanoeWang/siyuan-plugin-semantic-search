@@ -9,6 +9,7 @@ import {
     getFrontend,
     getBackend,
     IModel,
+    IPluginDockTab,
     Setting,
     fetchPost,
     Protyle
@@ -32,10 +33,18 @@ window.sython = {
 
 export default class Sython extends Plugin {
 
-    private customTab: () => IModel;
+    private sytermDock: { config: IPluginDockTab; model: IModel; };
     private isMobile: boolean;
 
     onload() {
+        this.data[STORAGE_NAME] = {readonlyText: "Readonly"};
+
+        const frontEnd = getFrontend();
+        this.isMobile = frontEnd === "mobile" || frontEnd === "browser-mobile";
+        // 图标的制作参见帮助文档
+        this.addIcons(cst.diyIcon.searchPeople);
+        this.addIcons(cst.diyIcon.syterm);
+
         // todo: add /envs/ to syncignore file
         for (var folder of [cst.pyDownDir, cst.sythonLogDir]) {
             if (!nodepkg.fs.existsSync(folder)) {
@@ -50,38 +59,52 @@ export default class Sython extends Plugin {
 
         websocket.keepConnected();
 
-        this.data[STORAGE_NAME] = {readonlyText: "Readonly"};
-
-        const frontEnd = getFrontend();
-        this.isMobile = frontEnd === "mobile" || frontEnd === "browser-mobile";
-        // 图标的制作参见帮助文档
-        this.addIcons(cst.diyIcon.searchPeople);
-
-        this.customTab = this.addTab({
-            type: TAB_TYPE,
+        this.sytermDock = this.addDock({
+            config: {
+                position: "BottomLeft",
+                size: {width:0, height:300},
+                icon: "syTerm",
+                title: this.i18n.syterm
+            },
+            data: {
+                text: "SyTerm"
+            },
+            type: DOCK_TYPE,
             init() {
                 this.element.innerHTML = `
-<div class="plugin-sample__custom-tab" style="flex-direction: column">
-    <h1 style="margin-bottom: 30px;">Press Shift + Alt + F to open this tab</h1>
+<div class="fn__flex-1 fn__flex-column syterm">
+  <div class="composite title">
+    <div class="composite-bar panel-switcher-container">
+      <div class="action-bar">
+        <ul class="actions-container" role="tablist">
+          <li class="action-item" role="tab" draggable="true" aria-label="" aria-expanded="true" aria-selected="true" tabindex="0">终端</li>
+          <li class="action-item" role="tab" draggable="true" aria-label="" aria-expanded="true" aria-selected="true" tabindex="0">Sython</li>
+          <li class="action-item" role="tab" draggable="true" aria-label="" aria-expanded="true" aria-selected="true" tabindex="0">设置</li>
+        </ul>
+      </div>
+    </div>
+    <div class="title-actions"></div>
+    <div class="global-actiions"></div>
+  </div>
+
+  <div class="content" style="padding-left:18px; padding-right:18px;">
     <div id="terminal"></div>
+  </div>
 </div>`;
                 terminal.initXterm();
-            },
-            beforeDestroy() {
-                debug("before destroy tab:", TAB_TYPE);
             },
             destroy() {
                 debug("destroy tab:", TAB_TYPE);
             }
-        });
+        })
 
-        this.addCommand({
-            langKey: "showTermainal",
-            hotkey: "⇧⌘\`",
-            callback: () => {
-                this.showTab();
-            }
-        });
+        // this.addCommand({
+        //     langKey: this.i18n.showTerminal,
+        //     hotkey: "⇧⌘\`",
+        //     callback: () => {
+        //         this.showTab();
+        //     }
+        // });
 
         debug(this.i18n.helloPlugin);
 
@@ -172,18 +195,5 @@ export default class Sython extends Plugin {
 
     private eventBusLog({detail}: any) {
         debug(detail);
-    }
-
-    private showTab() {
-        const tab = openTab({
-            app: this.app,
-            custom: {
-                icon: "searchPeople",
-                title: "Semantic Search",
-                // id: this.name + TAB_TYPE
-                fn: this.customTab
-            },
-        });
-        debug(tab);
     }
 }

@@ -28,5 +28,9 @@
     "webpack-cli": "^5.1.4",
     "xterm": "^5.2.1",
     "zip-webpack-plugin": "^4.0.1"
+  },
+  "dependencies": {
+    "xterm-addon-attach": "^0.8.0",
+    "xterm-addon-fit": "^0.7.0"
   }
 }

@@ -5,8 +5,9 @@
   "byeMenu": "Bye, Menu!",
   "helloPlugin": "Hello, Plugin!",
   "byePlugin": "Bye, Plugin!",
-  "showTerminal": "Show terminal",
+  "showTerminal": "Show SY Terminal",
   "removedData": "Data deleted",
   "confirmRemove": "Confirm to delete the data in ${name}?",
-  "insertEmoji": "Insert Emoji"
+  "insertEmoji": "Insert Emoji",
+  "syterm": "SY Terminal"
 }

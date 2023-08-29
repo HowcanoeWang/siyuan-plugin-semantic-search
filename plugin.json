@@ -3,7 +3,7 @@
   "author": "HowcanoeWang",
   "url": "https://github.com/HowcanoeWang/sython",
   "version": "0.0.1",
-  "minAppVersion": "2.10.0",
+  "minAppVersion": "2.10.2",
   "backends": ["windows", "linux", "darwin"],
   "frontends": ["desktop", "desktop-window"],
   "displayName": {
