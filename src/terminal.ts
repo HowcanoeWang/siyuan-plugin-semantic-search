@@ -45,13 +45,15 @@ export function initXterm() {
     }) 
 }
 
-export function shellRun(command: string, cwd: string, shell: boolean = true, detached: boolean = false) {
+export function shellRun(command: string, cwd: string, shell: boolean = true, detached: boolean = false,  windowsHide: boolean = true) {
     const {spawn}  = (window as any).require('child_process');
     let spawnObj;
 
     debug(`[shellRun] ${command} @ ${cwd}`);
 
-    spawnObj = spawn(command, {cwd: cwd, shell: shell, detached: detached});
+    // windowsHide not workding
+    // https://github.com/nodejs/node/issues/21825#issuecomment-503766781
+    spawnObj = spawn(command, {cwd: cwd, shell: shell, detached: detached, windowsHide: windowsHide});
 
     let stdout: string = '';
     let stderr: string = '';
@@ -70,8 +72,8 @@ export function shellRun(command: string, cwd: string, shell: boolean = true, de
         console.log('close code : ' + code);
         window.sython.ws.send('exit');
     })
-    spawnObj.on('exit', (code: any) => {
-        console.log(`child process exited with code ${code}`);
+    spawnObj.on('exit', (code: any, signal:any) => {
+        console.log(`child process exited with code ${code}, and get signal ${signal}`);
     });
 
     if (detached) {

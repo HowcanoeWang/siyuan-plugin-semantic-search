@@ -21,6 +21,7 @@ import { nodepkg } from "./constants";
 import * as fileTool from "./fileTool";
 import { debug } from "./notice";
 import * as terminal from "./terminal";
+import * as websocket from "./websocket";
 
 const STORAGE_NAME = "menu-config";
 const TAB_TYPE = "custom_tab";
@@ -40,19 +41,7 @@ export default class Sython extends Plugin {
             debug(`文件夹已存在：${cst.pyDownDir}`);
         }
 
-        const ws = new WebSocket("ws://localhost:8765");
-
-        ws.onopen = function(event) {
-            debug(`WebSocket is open now. readyState=${ws.readyState}`);
-        };
-          
-        ws.onclose = function(event) {
-            debug(`WebSocket disconnected, readyState=${ws.readyState}`);
-        };
-        
-        ws.onerror= function(error) {
-            debug(`WebSocket error: readyState=${ws.readyState}`, error);
-        };
+        const ws = websocket.wsConnect();
 
         window.sython = {
             ws: ws
@@ -160,12 +149,15 @@ export default class Sython extends Plugin {
         }
 
         // 运行websocket
-        // if (window.sython.ws.readyState !== 1) {
-        // var [stdout, stderr] = terminal.shellRun(
-        //     `${python_prefix} ${backendPy}`,
-        //     cwd
-        // );
-        // }
+        if (window.sython.ws.readyState !== 1) {
+            var [stdout, stderr] = terminal.shellRun(
+                `${python_prefix} ${backendPy}`,
+                cwd,
+                true, 
+                true,
+                true
+            );
+        }
 
     }
 

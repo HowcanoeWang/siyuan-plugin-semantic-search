@@ -2,7 +2,7 @@ import sys
 import subprocess
 import importlib.util
 import asyncio
-import signal
+import time
 # import pty
 # import os
 
@@ -36,29 +36,30 @@ if ws in sys.modules:
     # lanuch the websocket server
     from websockets.server import serve
 
-    # async def echo(websocket):
-    #     async for message in websocket:
-    #         await websocket.send(message)
-
     async def shell(websocket):
-        try:
-            async for message in websocket:
-                # message = await websocket.recv()
-                print("[py] websockets: " +message)
-                sys.stdout.flush()
+        async for message in websocket:
+            # message = await websocket.recv()
+            print("[py] websockets: " +message)
+            sys.stdout.flush()
 
-                if message == "exit":
-                    sys.exit()
-        except websockets.exceptions.ConnectionClosed:
-            print("Client closed the connection")
-
+            if message == "exit":
+                sys.exit()
 
     async def main():
+        port_num = 8765
+
         stop = asyncio.Future()
-        async with serve(shell, "localhost", 8765):
-            print('Launch local server at [localhost:8765]')
+        async with serve(shell, "localhost", port_num):
+            print(f'Launch local server at [localhost:{port_num}]')
             sys.stdout.flush()
             # await asyncio.Future()  # run forever
+
+            # while True:
+            #     with open(f'C:/Users/hwang/Desktop/loops.txt', 'w') as f:
+            #         f.writelines(str(time.time()))
+                # 每隔1秒运行writeAA()函数
+                # await asyncio.sleep(1)
+
             await stop
             await shell.close()
 
