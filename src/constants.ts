@@ -6,7 +6,7 @@ export const pluginName = packageInfo.name;
 declare global {
     interface Window { 
         sython : {
-            ws: WebSocket;
+            ws?: WebSocket;
         } 
     }
 }
@@ -41,6 +41,7 @@ if ((window as any).siyuan.config.system.os === 'windows'){
 }
             
 export const pyDownDir = `${dataDir}/storage/envs/`
+export const sythonLogDir = `${dataDir}/plugins/sython/.log/`
 
 export interface Response {
     [x: string]: any 

@@ -1,6 +1,7 @@
 import { Terminal } from 'xterm';
 import { pluginName } from './constants';
 import { debug } from './notice';
+import { nodepkg } from './constants';
 
 export function loadXterm() {
     // 添加<link>
@@ -45,36 +46,48 @@ export function initXterm() {
     }) 
 }
 
-export function shellRun(command: string, cwd: string, shell: boolean = true, detached: boolean = false,  windowsHide: boolean = true) {
+export function shellRun(command: string, cwd: string, shell: boolean = true, detached: boolean = false,  windowsHide: boolean = true, logfile: string = 'ignore') {
     const {spawn}  = (window as any).require('child_process');
-    let spawnObj;
 
-    debug(`[shellRun] ${command} @ ${cwd}`);
+    let stdio = ['pipe', 'pipe', 'pipe'];
+    if (detached) {
+        if (logfile !== 'ignore') {
+            const out = nodepkg.fs.openSync(logfile, "a");
+            stdio = ['ignore', out, out];
+        } else {
+            stdio = ['ignore', 'ignore', 'ignore'];
+        }
+    }
 
     // windowsHide not workding
     // https://github.com/nodejs/node/issues/21825#issuecomment-503766781
-    spawnObj = spawn(command, {cwd: cwd, shell: shell, detached: detached, windowsHide: windowsHide});
+    let spawnObj = spawn(command, {cwd: cwd, shell: shell, detached: detached, windowsHide: windowsHide, stdio: stdio});
+
+    debug(`[shellRun][pid: ${spawnObj.pid}] ${command} @ ${cwd}`);
 
     let stdout: string = '';
     let stderr: string = '';
     
-    spawnObj.stdout.on('data', function(data: any) {
-        let outStr = data.toString()
-        stdout += `\n${outStr}`
-        debug(`[Shell][Info]${outStr}`);
-    });
-    spawnObj.stderr.on('data', (data: any) => {
-        let outStr = data.toString()
-        stderr += `\n${outStr}`
-        debug(`[Shell][Error]${outStr}`);
-    });
-    spawnObj.on('close', function(code: string) {
-        console.log('close code : ' + code);
-        window.sython.ws.send('exit');
-    })
-    spawnObj.on('exit', (code: any, signal:any) => {
-        console.log(`child process exited with code ${code}, and get signal ${signal}`);
-    });
+    if (!detached) {
+        spawnObj.stdout.on('data', function(data: any) {
+            let outStr = data.toString()
+            stdout += `\n${outStr}`
+            debug(`[Shell][Info]${outStr}`);
+        });
+        spawnObj.stderr.on('data', (data: any) => {
+            let outStr = data.toString()
+            stderr += `\n${outStr}`
+            debug(`[Shell][Error]${outStr}`);
+        });
+        spawnObj.on('close', function(code: string) {
+            console.log('close code : ' + code);
+            window.sython.ws.send('exit');
+        })
+        spawnObj.on('exit', (code: any, signal:any) => {
+            console.log(`child process exited with code ${code}, and get signal ${signal}`);
+        });
+    }
+
 
     if (detached) {
         spawnObj.unref();

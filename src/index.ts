@@ -34,11 +34,13 @@ export default class Sython extends Plugin {
 
     onload() {
         // todo: add /envs/ to syncignore file
-        if (!nodepkg.fs.existsSync(cst.pyDownDir)) {
-            nodepkg.fs.mkdirSync(cst.pyDownDir, { recursive: true });
-            debug(`已创建文件夹：${cst.pyDownDir}`);
-        } else {
-            debug(`文件夹已存在：${cst.pyDownDir}`);
+        for (var folder of [cst.pyDownDir, cst.sythonLogDir]) {
+            if (!nodepkg.fs.existsSync(folder)) {
+                nodepkg.fs.mkdirSync(folder, { recursive: true });
+                debug(`已创建文件夹：${folder}`);
+            } else {
+                debug(`文件夹已存在：${folder}`);
+            }
         }
 
         const ws = websocket.wsConnect();
@@ -145,17 +147,19 @@ export default class Sython extends Plugin {
         if (getBackend() === 'windows') {
             python_prefix = `${envDir}/python.exe`;
         } else {
-            python_prefix = `source ${envDir}/activate.sh && chmod +x ${envDir}/bin/python3.10 && python3.10`;
+            python_prefix = `cd ${envDir} && source ./activate.sh && chmod +x ./bin/python3.10 && cd ${cwd} && python3.10`;
         }
 
         // 运行websocket
         if (window.sython.ws.readyState !== 1) {
+            const todayStr = fileTool.getToday();
             var [stdout, stderr] = terminal.shellRun(
-                `${python_prefix} ${backendPy}`,
-                cwd,
-                true, 
-                true,
-                true
+                `${python_prefix} ${backendPy}`, // command
+                cwd, // cwd,
+                true, // shell
+                true, // detached
+                false, // windowsHide
+                `${cst.sythonLogDir}${todayStr}.log`// logfile
             );
         }
 
