@@ -6,7 +6,9 @@ import time
 # import pty
 # import os
 
-print("Current Python path: ", sys.executable)
+welcome_str = '$$ Sython Console Backend $$'
+welcome_bar = '$' * len(welcome_str)
+print(f'\n\n{welcome_bar}\n{welcome_str}\n{welcome_bar}\n')
 sys.stdout.flush()
 
 # check if websocket is installed
@@ -63,4 +65,7 @@ if ws in sys.modules:
             await stop
             await shell.close()
 
-    asyncio.run(main())
+    try:
+        asyncio.run(main())
+    except Exception as e:
+        print(f'[Error] The port seems been taken: {e}')

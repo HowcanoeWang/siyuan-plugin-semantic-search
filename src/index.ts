@@ -27,6 +27,9 @@ const STORAGE_NAME = "menu-config";
 const TAB_TYPE = "custom_tab";
 const DOCK_TYPE = "dock_tab";
 
+window.sython = {
+};
+
 export default class Sython extends Plugin {
 
     private customTab: () => IModel;
@@ -43,13 +46,9 @@ export default class Sython extends Plugin {
             }
         }
 
-        const ws = websocket.wsConnect();
-
-        window.sython = {
-            ws: ws
-        };
-
         terminal.loadXterm();
+
+        websocket.keepConnected();
 
         this.data[STORAGE_NAME] = {readonlyText: "Readonly"};
 
@@ -151,17 +150,17 @@ export default class Sython extends Plugin {
         }
 
         // 运行websocket
-        if (window.sython.ws.readyState !== 1) {
-            const todayStr = fileTool.getToday();
-            var [stdout, stderr] = terminal.shellRun(
-                `${python_prefix} ${backendPy}`, // command
-                cwd, // cwd,
-                true, // shell
-                true, // detached
-                false, // windowsHide
-                `${cst.sythonLogDir}${todayStr}.log`// logfile
-            );
-        }
+        // if (window.sython.ws.readyState !== 1) {
+        const todayStr = fileTool.getToday();
+        var [stdout, stderr] = terminal.shellRun(
+            `${python_prefix} ${backendPy}`, // command
+            cwd, // cwd,
+            true, // shell
+            true, // detached
+            false, // windowsHide
+            `${cst.sythonLogDir}${todayStr}.log`// logfile
+        );
+        // }
 
     }
 

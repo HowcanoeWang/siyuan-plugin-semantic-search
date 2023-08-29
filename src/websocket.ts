@@ -1,6 +1,6 @@
 import { debug } from "./notice";
 
-export function wsConnect() {
+export function keepConnected() {
     const ws = new WebSocket("ws://localhost:8765");
     // const ws = new WebSocket("ws://localhost:8765/websocket");
 
@@ -10,12 +10,12 @@ export function wsConnect() {
       
     ws.onclose = function(event) {
         debug(`WebSocket disconnected, readyState=${ws.readyState}`);
-        setTimeout(wsConnect, 3 * 1000);
+        setTimeout(keepConnected, 3 * 1000);
     };
     
     ws.onerror= function(error) {
         debug(`WebSocket error: readyState=${ws.readyState}`, error);
     };
 
-    return ws
+    window.sython.ws = ws;
 }

@@ -16,7 +16,6 @@ export const nodepkg = {
     https: (window as any).require('https'),
     path: (window as any).require('path'),
     os: (window as any).require('os'),
-    zlib: (window as any).require('node:zlib'),
 }
 
 export const diyIcon =  {
